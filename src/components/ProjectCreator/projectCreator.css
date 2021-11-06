@@ -1,0 +1,23 @@
+.block_creator {
+  width: 60%;
+  height: 60px;
+  margin: auto; 
+  padding: auto;
+  /* background-color: rgba(213, 216, 190, 0.2); */
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr 1fr;
+  /* grid-template-rows: repeat(3, 1fr); */
+  background-color: rgba(250, 197, 176, 0.2);
+  position: relative;
+}
+
+.title_block_creator {
+  background-color: rgb(145, 144, 144);
+  grid-column: 2;
+  border-radius: 20px;
+}
+
+.button_creator {
+  grid-column: 3;
+  border-radius: 20px;
+}
