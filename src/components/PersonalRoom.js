@@ -32,10 +32,8 @@ export default function LoginPage() {
           className='status_proj_false'
           onClick={() => {
             const user_name = localStorage.getItem('user');
-            var index = item.candidates.indexOf(user_name);
-            if (index > -1) {
-              item.candidates.splice(index, 1);
-            }
+
+            item.candidates = item.candidates.filter((el) => el != user_name);
 
             fetch(`http://localhost:3000/posts/${item.id}`, {
               headers: {

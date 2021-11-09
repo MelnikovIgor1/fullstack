@@ -16,10 +16,10 @@ export function LoginBlock() {
   const [age, setAge] = React.useState(defaultAge);
 
   const [isSigningUp, setIsSigningUp] = React.useState(false);
-  const [redirect, setRedirect] = React.useState(false);
+  let [redirect, setRedirect] = React.useState(false);
 
   if (redirect) {
-    console.log('', localStorage.getItem('user'));
+    redirect = false;
     return <Redirect to='/room/' />;
   }
 
@@ -66,10 +66,6 @@ export function LoginBlock() {
           onClick={(el) => {
             el.preventDefault();
             el.stopPropagation();
-            // console.log('form');
-            // console.log('form', isSigningUp, login, password, age);
-            // new Promise((r) => setTimeout(r, 2000)).JSON();
-            // if (isSigningUp) {
             const user = {
               login,
               password,
@@ -84,11 +80,8 @@ export function LoginBlock() {
                 method: 'POST',
               });
             }
-            // }
 
             localStorage.setItem('user', login);
-            // localStorage.setItem('password', password);
-            // localStorage.setItem('data', user);
             setIsSigningUp(isSigningUp);
 
             setRedirect(true);

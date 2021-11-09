@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './modal.css';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -6,7 +6,7 @@ import { deactivateModal } from '../../actions/modal';
 
 import { CreatorForm } from '../ProjectCreator';
 
-import { CandidatesList, ParticipantsList } from '../CandidatesList';
+import { UserList } from '../CandidatesList';
 
 export function Modal() {
   const modalData = useSelector((state) => state.modal.modalData);
@@ -15,13 +15,41 @@ export function Modal() {
   const flag = modalData != null;
   const item = modalData;
 
-  console.log('Modal', modalData, flag, item);
+  const candidates = flag
+    ? useSelector((state) => state.projectItemsList.items)[item.id].candidates
+    : null;
+  const participants = flag
+    ? useSelector((state) => state.projectItemsList.items)[item.id].participants
+    : null;
+
+  const initLists = {
+    candidates: candidates,
+    participants: participants,
+  };
+
+  const [lists, setLists] = flag ? useState(initLists) : [null, null];
+
+  const onClick1 = flag
+    ? (user) => {
+        setLists({
+          candidates: lists.candidates.filter((el) => el != user),
+          participants: lists.participants.concat([user]),
+        });
+      }
+    : null;
+  const onClick2 = flag
+    ? (user) => {
+        setLists({
+          participants: lists.participants.filter((el) => el != user),
+          candidates: lists.candidates.concat([user]),
+        });
+      }
+    : null;
 
   return (
     <div
       className='modal_wrapper'
-      onClick={(ev) => {
-        console.log('event', ev);
+      onClick={() => {
         dispatch(deactivateModal());
       }}
     >
@@ -31,12 +59,16 @@ export function Modal() {
           onClick={(event) => event.stopPropagation()}
         >
           <p>Participants list:</p>
-          <ParticipantsList item={item} dispatch={dispatch} />
+          <UserList userList={lists.participants} onClick={onClick2} />
+          {/* <div>
+            <label>Title</label>
+            <input name='title' type='text' value='hi' />
+          </div>
+          <button type='submit'>{'buttonTitle'}</button> */}
         </div>
       )}
       <div className='modal' onClick={(event) => event.stopPropagation()}>
-        <CreatorForm flag={flag} item={item} />
-        {/* {modalData} */}
+        <CreatorForm flag={flag} item={item} userLists={lists} />
       </div>
       {flag && (
         <div
@@ -44,7 +76,7 @@ export function Modal() {
           onClick={(event) => event.stopPropagation()}
         >
           <p>Candidates list:</p>
-          <CandidatesList item={item} dispatch={dispatch} />
+          <UserList userList={lists.candidates} onClick={onClick1} />
         </div>
       )}
     </div>

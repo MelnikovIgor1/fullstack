@@ -5,3 +5,10 @@
 .false_candidate {
   background-color: red;
 }
+
+
+.candidate_item {
+  background-color: rgb(226, 179, 76);
+  height: 50px;
+  border-radius: 20px;
+}

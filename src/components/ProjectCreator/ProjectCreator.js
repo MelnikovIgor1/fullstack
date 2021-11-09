@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 
 import { useDispatch } from 'react-redux';
@@ -32,9 +33,7 @@ export function CreatorButton() {
 }
 
 export function CreatorForm(props) {
-  console.log('CreatorForm', props);
-  const { flag = false, item = null } = props;
-  console.log('CreatorForm', props, flag, item);
+  const { flag = false, item = null, userLists = null } = props;
   const dispatch = useDispatch();
 
   const buttonTitle = 'Submit';
@@ -52,11 +51,6 @@ export function CreatorForm(props) {
   );
 
   const handleClickReplace = (post) => {
-    const data = {
-      title: post.title,
-    };
-
-    console.log('postItems', data);
     fetch(`http://localhost:3000/posts/${item.id}`, {
       headers: {
         'Content-Type': 'Application/json',
@@ -70,11 +64,6 @@ export function CreatorForm(props) {
       });
   };
   const handleClickNew = (post) => {
-    const data = {
-      title: post.title,
-    };
-
-    console.log('postItems', data);
     fetch('http://localhost:3000/posts', {
       headers: {
         'Content-Type': 'Application/json',
@@ -89,7 +78,6 @@ export function CreatorForm(props) {
   };
 
   const handleClick = flag ? handleClickReplace : handleClickNew;
-  console.log('putter', handleClick, flag, handleClickReplace);
 
   return (
     <form>
@@ -106,7 +94,8 @@ export function CreatorForm(props) {
       </div>
       <div>
         <label>Description</label>
-        <input
+        <textarea
+          className='text_area_form'
           name='description'
           type='text'
           value={description}
@@ -117,7 +106,8 @@ export function CreatorForm(props) {
       </div>
       <div>
         <label>Requirements</label>
-        <input
+        <textarea
+          className='text_area_form'
           name='requirements'
           type='text'
           value={requirements}
@@ -135,8 +125,8 @@ export function CreatorForm(props) {
             description,
             user,
             requirements,
-            participants: flag ? item.participants : [user],
-            candidates: flag ? item.candidates : [],
+            participants: flag ? userLists.participants : [user],
+            candidates: flag ? userLists.candidates : [],
           };
           event.preventDefault();
           event.stopPropagation();

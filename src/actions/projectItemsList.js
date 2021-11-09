@@ -5,7 +5,6 @@ import {
   SET_ERROR,
   ADD_ITEMS,
   SET_ITEMS,
-  UNAPPLY,
   DO_NOTHING,
 } from '../reducers/projectItemsList';
 
@@ -17,7 +16,6 @@ import {
 // });
 
 export function addProjectItem(item) {
-  console.log('addProjectItem');
   return {
     type: ADD_ITEM,
     item,
@@ -25,7 +23,6 @@ export function addProjectItem(item) {
 }
 export function setItems(items) {
   const posts = Object.assign({}, ...items.map((x) => ({ [x.id]: x })));
-  console.log('items', posts, items);
   return {
     type: SET_ITEMS,
     itemsList: items.map((el) => el.id),
@@ -34,7 +31,6 @@ export function setItems(items) {
   };
 }
 export function removeItem(itemId) {
-  console.log('removeItem');
   return {
     type: REMOVE_ITEM,
     itemId,
@@ -42,25 +38,14 @@ export function removeItem(itemId) {
 }
 
 export function setError() {
-  console.log('setError');
-
   return {
     type: SET_ERROR,
   };
 }
 
 export function addItems() {
-  console.log('addItems');
-
   return {
     type: ADD_ITEMS,
-  };
-}
-
-export function unapply(item) {
-  return {
-    type: UNAPPLY,
-    item,
   };
 }
 
@@ -71,15 +56,13 @@ export function doNothing() {
 }
 
 export function fetchItems() {
-  console.log('fetching');
   return async (dispatch) => {
     try {
       const response = await fetch('http://localhost:3000/posts');
       const data = await response.json();
       dispatch(setItems(data));
     } catch {
-      console.log('Error happened');
-      // dispatch(setError());
+      dispatch(setError());
     }
   };
 }

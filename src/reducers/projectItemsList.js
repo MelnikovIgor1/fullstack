@@ -10,7 +10,6 @@ export const SET_ITEMS = 'SET_ITEMS';
 
 export const REMOVE_ITEM = 'REMOVE_ITEM';
 export const SET_ERROR = 'SET_ERROR';
-export const UNAPPLY = 'UNAPPLY';
 export const DO_NOTHING = 'DO_NOTHING';
 
 export function projectItemsList(state = initialState, action) {
@@ -48,8 +47,6 @@ export function projectItemsList(state = initialState, action) {
       return state;
     }
     case SET_ITEMS: {
-      console.log('setting');
-
       return {
         ...state,
         itemsList: action.itemsList,
@@ -63,18 +60,6 @@ export function projectItemsList(state = initialState, action) {
         itemsList: state.itemList.filter((el) => el !== action.itemId),
         items: state.items.filter((el) => el.id !== action.itemId),
         flag_error: state.flag_error,
-      };
-    }
-    case UNAPPLY: {
-      // const itemsList = state.itemsList;
-      const user_name = localStorage.getItem('user');
-      var index = action.item.candidates.indexOf(user_name);
-      if (index > -1) {
-        action.item.candidates.splice(index, 1);
-      }
-      console.log(state, action.item.candidates);
-      return {
-        ...state,
       };
     }
     case SET_ERROR: {

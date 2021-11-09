@@ -29,7 +29,7 @@ export default function LoginPage() {
           className='status_proj_false'
           onClick={() => {
             const user_name = localStorage.getItem('user');
-            var index = item.candidates.indexOf(user_name);
+            const index = item.candidates.indexOf(user_name);
             if (index > -1) {
               item.candidates.splice(index, 1);
             }

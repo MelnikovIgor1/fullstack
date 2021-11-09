@@ -13,14 +13,12 @@ export function App() {
       <BrowserRouter>
         <Switch>
           <Route path='/projects'>
-            {/* <h2>Hu</h2> */}
             <ProjectsRoom />
           </Route>
           <Route path='/room'>
             <PersonalRoom />
           </Route>
           <Route path='/'>
-            {/* <h2>Hu</h2> */}
             <LoginPage />
           </Route>
         </Switch>

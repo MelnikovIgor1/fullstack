@@ -1,1 +1,1 @@
-export { CandidatesList, ParticipantsList } from './CandidatesList';
+export { UserList } from './CandidatesList';
