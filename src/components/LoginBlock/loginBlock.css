@@ -1,0 +1,17 @@
+.from_label {
+  display: block;
+  position: relative;
+}
+
+.submit_button {
+  position: relative;
+  width: 60%;
+  display: flex;         /* NEW, Spec - Firefox, Chrome, Opera */
+  margin: 0 0 0 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.login_form_error {
+  color: red;
+}
