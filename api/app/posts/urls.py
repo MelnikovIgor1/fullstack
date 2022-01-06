@@ -17,7 +17,8 @@ Including another URLconf
 from django.urls import path
 from .views import PostDetails, PostList
 
+
 urlpatterns = [
-    path('', PostList.as_view()),
-    path('<slug:pk>', PostDetails.as_view())
+    # path('', PostList.as_view()),
+    # path('<slug:pk>', PostDetails.as_view())
 ]

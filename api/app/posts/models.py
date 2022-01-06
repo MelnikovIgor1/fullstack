@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import int_list_validator
 
 
 # Create your models here.
@@ -11,8 +12,15 @@ class Post(models.Model):
     # candidates = models.ManyToManyRel(User, through='Me2mbership')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='post_images')
-    participants = models.ManyToManyField(User, related_name='participants', verbose_name="participants list")
-    candidates = models.ManyToManyField(User, related_name='candidates', verbose_name="participants list")
+    participants = models.CharField(validators=[int_list_validator], max_length=100)
+    candidates = models.CharField(validators=[int_list_validator], max_length=100)
 
     def __str__(self):
         return self.title
+
+
+# class UsersList(models.Model):
+#     list = models.ManyToOneField(User, related_name='list', verbose_name="pp list")
+
+#     def __str__(self):
+#         return 'array'

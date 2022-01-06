@@ -15,13 +15,29 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.static import static
+from django.conf import settings
 
 from posts.views import post_list
+from rest_framework import routers
+from posts.views import PostListView # , MyPostListView
+from usersdata.views import UserDataView
+
+from .view import CurrentUser
+
+# from .view import UserViewSet
+
+from usersdata.views import UsersDataViewSet
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+
+router = routers.DefaultRouter()
+router.register('usersdata', UsersDataViewSet)
+router.register('posts', PostListView)
+router.register('users', UserDataView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,5 +46,7 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('signup/', include('posts.urls')),
-]
+    path('api/user/current', CurrentUser.as_view(), name='current_user'),
+    path('api/', include(router.urls)),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

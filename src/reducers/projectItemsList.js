@@ -1,3 +1,5 @@
+// import { act } from 'react-dom/cjs/react-dom-test-utils.production.min';
+
 const initialState = {
   itemsList: [],
   items: {},
@@ -11,6 +13,8 @@ export const SET_ITEMS = 'SET_ITEMS';
 export const REMOVE_ITEM = 'REMOVE_ITEM';
 export const SET_ERROR = 'SET_ERROR';
 export const DO_NOTHING = 'DO_NOTHING';
+export const SET_APPLICATION = 'SET_APPLICATION';
+export const DELETE_APPLICATION = 'DELETE_APPLICATION';
 
 export function projectItemsList(state = initialState, action) {
   switch (action.type) {
@@ -69,6 +73,51 @@ export function projectItemsList(state = initialState, action) {
         flag_error: true,
       };
     }
+    case SET_APPLICATION: {
+      if (!action.payload) {
+        return state;
+      }
+      const post = state.posts[action.payload.post];
+
+      return {
+        ...state,
+        posts: {
+          ...state.posts,
+          [post.id]: {
+            ...state.posts[post.id],
+            application_set: [
+              ...state.posts[post.id].comment_set,
+              action.payload,
+            ],
+          },
+        },
+      };
+    }
+    case DELETE_APPLICATION: {
+      if (!action.payload) {
+        return state;
+      }
+      // const post = state.posts[action.post_id];
+      const post_id = action.post_id;
+      const application_id = action.application_id;
+
+      return {
+        ...state,
+        posts: {
+          ...state.posts,
+          [post_id]: {
+            ...state.posts[post_id],
+            application_set: [
+              ...state.posts[post_id].comment_set.filter(
+                (el) => el.id !== application_id
+              ),
+              action.payload,
+            ],
+          },
+        },
+      };
+    }
+
     default: {
       return state;
     }

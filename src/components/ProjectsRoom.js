@@ -8,11 +8,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { ItemList } from './ItemList/ItemList';
 
 import { fetchItems } from '../actions/projectItemsList';
+import { ApiClientService } from '../services/ApiClientService';
 
 import './style.css';
 import { Redirect } from 'react-router-dom';
 
-export default function LoginPage() {
+export default function LoginPage(props) {
+  const { user } = props;
   const dispatch = useDispatch();
 
   const modelOpen = useSelector((state) => state.modal.modalActive);
@@ -21,56 +23,94 @@ export default function LoginPage() {
   }, []);
 
   const getApplyButton = (item) => {
-    const user_name = localStorage.getItem('user');
+    const user_name = Number(localStorage.getItem('user_id'));
     if (item.user == user_name) return <div className='status_proj'>Org</div>;
-    if (item.candidates.includes(user_name))
+    const init_state = item.candidates.map((el) => el.id).includes(user_name);
+
+    const [Applied, setApplied] = React.useState(init_state);
+
+    if (Applied)
       return (
         <div
           className='status_proj_false'
-          onClick={() => {
-            const user_name = localStorage.getItem('user');
-            const index = item.candidates.indexOf(user_name);
+          onClick={async () => {
+            const user_name_ = localStorage.getItem('user');
+            const answ = await ApiClientService('users/');
+
+            const user_id = answ.results.find(
+              (el) => el['username'] == user_name_
+            )['user'];
+            const index = item.candidates
+              .map((el) => el.id)
+              .indexOf(user_id.id);
+
             if (index > -1) {
               item.candidates.splice(index, 1);
             }
 
-            fetch(`http://localhost:3000/posts/${item.id}`, {
-              headers: {
-                'Content-Type': 'Application/json',
-              },
-              body: JSON.stringify(item),
+            const formData = new FormData();
+            for (let postKey in item) {
+              if (postKey != 'image' && postKey != 'participants') {
+                formData.append(postKey, JSON.stringify(item[postKey]));
+              }
+              if (postKey == 'participants') {
+                for (let a of item[postKey]) {
+                  console.log('ITEM', postKey + '[]', JSON.stringify(a));
+                  formData.append(postKey + '[]', JSON.stringify(a));
+                }
+              }
+            }
+            setApplied(item.candidates.map((el) => el.id).includes(user_name));
+
+            console.log('ApiClientService-run-1');
+
+            await ApiClientService(`posts/${item.id}/`, {
               method: 'PUT',
-            })
-              .then((response) => response.json())
-              .then(() => {
-                dispatch(fetchItems());
-              });
+              body: formData,
+            });
           }}
         >
           Applied
         </div>
       );
-    if (item.participants.includes(user_name))
+    if (item.participants.map((el) => el.id).includes(user_name))
       return <div className='status_proj_false'>Involved</div>;
     else
       return (
         <div
           className='status_proj'
-          onClick={() => {
-            const user_name = localStorage.getItem('user');
-            item.candidates.push(user_name);
+          onClick={async () => {
+            const user_name_ = localStorage.getItem('user');
+            const answ = await ApiClientService('users/');
+            console.log('getApplyButton-response', answ);
 
-            fetch(`http://localhost:3000/posts/${item.id}`, {
-              headers: {
-                'Content-Type': 'Application/json',
-              },
-              body: JSON.stringify(item),
+            const user_id = answ.results.find(
+              (el) => el['username'] == user_name_
+            )['user'];
+
+            item.candidates.push(user_id);
+
+            const formData = new FormData();
+            for (let postKey in item) {
+              if (postKey != 'image' && postKey != 'participants') {
+                console.log(postKey, JSON.stringify(item[postKey]));
+                formData.append(postKey, JSON.stringify(item[postKey]));
+              }
+              if (postKey == 'participants') {
+                for (let a of item[postKey]) {
+                  console.log('ITEM', postKey + '[]', JSON.stringify(a));
+                  formData.append(postKey + '[]', JSON.stringify(a));
+                }
+              }
+            }
+            setApplied(item.candidates.map((el) => el.id).includes(user_name));
+            console.log('formData', formData);
+
+            console.log('ApiClientService-run-2');
+            await ApiClientService(`posts/${item.id}/`, {
               method: 'PUT',
-            })
-              .then((response) => response.json())
-              .then(() => {
-                dispatch(fetchItems());
-              });
+              body: formData,
+            });
           }}
         >
           Apply
@@ -86,9 +126,14 @@ export default function LoginPage() {
 
   return (
     <div className='room_wrapper'>
-      <Header name='Personal room' />
+      <Header user={user} name='Personal room' />
       <div className='block_creator'>
-        <div className='title_block_creator' onClick={() => setRedirect(true)}>
+        <div
+          className='title_block_creator'
+          onClick={() => {
+            setRedirect(true);
+          }}
+        >
           All projects/My projects
         </div>
       </div>

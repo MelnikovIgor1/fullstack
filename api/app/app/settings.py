@@ -39,9 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'posts',
-    'users',
     'corsheaders',
     'rest_framework_simplejwt',
+    'usersdata',
+    # 'users',
 ]
 
 MIDDLEWARE = [
@@ -134,12 +135,20 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 5,
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 5,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
 
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ('content-disposition', 'accept-encoding', 'content-type', 'accept', 'origin', 'authorization')
 CORS_ORIGIN_WHITELIST = ('http://localhost:3001',)
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+MEDIA_URL = '/post_images/'
+MEDIA_ROOT = BASE_DIR / "post_images"
