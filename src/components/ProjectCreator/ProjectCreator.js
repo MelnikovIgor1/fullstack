@@ -1,26 +1,37 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 import { activateModal, deactivateModal } from '../../actions/modal';
+import { setPost } from '../../actions/posts';
 
-import { fetchItems } from '../../actions/projectItemsList';
+// import { fetchItems } from '../../actions/projectItemsList';
+import { ApiClientService } from '../../services/ApiClientService';
 
 import './projectCreator.css';
-import { Redirect } from 'react-router-dom';
+// import { Redirect } from 'react-router-dom';
 
 export function CreatorButton() {
+  const history = useHistory();
   const dispatch = useDispatch();
-  let [redirect, setRedirect] = React.useState(false);
-  if (redirect) {
-    redirect = false;
-    return <Redirect to='/projects/' />;
-  }
+
   return (
     <div className='block_creator'>
-      <div className='title_block_creator' onClick={() => setRedirect(true)}>
+      <div
+        className='title_block_creator'
+        onClick={() => {
+          history.push('/');
+        }}
+      >
         My projects/All projects
       </div>
+      {/* <img
+        className='button_creator'
+        src={'/public/plus.png'}
+        onClick={() => dispatch(activateModal())}
+      ></img> */}
       <button
         className='button_creator'
         onClick={() => dispatch(activateModal())}
@@ -32,9 +43,7 @@ export function CreatorButton() {
 }
 
 export function CreatorForm(props) {
-  console.log('CreatorForm', props);
-  const { flag = false, item = null } = props;
-  console.log('CreatorForm', props, flag, item);
+  const { user } = props;
   const dispatch = useDispatch();
 
   const buttonTitle = 'Submit';
@@ -42,111 +51,228 @@ export function CreatorForm(props) {
   const defaultTitle = '';
   const defaultDescription = '';
   const defaultRequirements = '';
-  const [title, setTitle] = React.useState(flag ? item.title : defaultTitle);
-  const [description, setDescription] = React.useState(
-    flag ? item.description : defaultDescription
-  );
+  const [title, setTitle] = React.useState(defaultTitle);
+  const [description, setDescription] = React.useState(defaultDescription);
+  const [requirements, setRequirements] = React.useState(defaultRequirements);
+  const fileRef = React.useRef();
 
-  const [requirements, setRequirements] = React.useState(
-    flag ? item.requirements : defaultRequirements
-  );
+  const [error, setError] = React.useState('');
 
-  const handleClickReplace = (post) => {
-    const data = {
-      title: post.title,
-    };
+  const handleClick = async (post) => {
+    const formData = new FormData();
+    for (let postKey in post) {
+      formData.append(postKey, post[postKey]);
+    }
 
-    console.log('postItems', data);
-    fetch(`http://localhost:3000/posts/${item.id}`, {
-      headers: {
-        'Content-Type': 'Application/json',
-      },
-      body: JSON.stringify(post),
-      method: 'PUT',
-    })
-      .then((response) => response.json())
-      .then(() => {
-        dispatch(fetchItems());
-      });
-  };
-  const handleClickNew = (post) => {
-    const data = {
-      title: post.title,
-    };
-
-    console.log('postItems', data);
-    fetch('http://localhost:3000/posts', {
-      headers: {
-        'Content-Type': 'Application/json',
-      },
-      body: JSON.stringify(post),
+    const response = await ApiClientService('posts/', {
+      body: formData,
       method: 'POST',
-    })
-      .then((response) => response.json())
-      .then(() => {
-        dispatch(fetchItems());
-      });
-  };
+    });
 
-  const handleClick = flag ? handleClickReplace : handleClickNew;
-  console.log('putter', handleClick, flag, handleClickReplace);
+    dispatch(setPost(response));
+  };
 
   return (
     <form>
-      <div>
-        <label>Title</label>
+      <div className='form_item_block'>
+        <label>Title: </label>
         <input
           name='title'
           type='text'
           value={title}
           onChange={(event) => {
             setTitle(event.target.value);
+            setError('');
           }}
         />
       </div>
-      <div>
-        <label>Description</label>
-        <input
+      <div className='form_item_block'>
+        <label>Description: </label>
+        <textarea
+          className='text_area_form'
           name='description'
           type='text'
           value={description}
           onChange={(event) => {
             setDescription(event.target.value);
+            setError('');
           }}
         />
       </div>
-      <div>
-        <label>Requirements</label>
-        <input
+      <div className='form_item_block'>
+        <label>Requirements: </label>
+        <textarea
+          className='text_area_form'
           name='requirements'
           type='text'
           value={requirements}
           onChange={(event) => {
             setRequirements(event.target.value);
+            setError('');
           }}
         />
       </div>
-      <button
-        type='submit'
-        onClick={(event) => {
-          const user = localStorage.getItem('user');
-          const post = {
-            title,
-            description,
-            user,
-            requirements,
-            participants: flag ? item.participants : [user],
-            candidates: flag ? item.candidates : [],
-          };
-          event.preventDefault();
-          event.stopPropagation();
+      <div className='form_item_block'>
+        <label>Image: </label>
+        <input type='file' ref={fileRef}></input>
+      </div>
+      <div className='div_button'>
+        <button
+          className='submit_button'
+          type='submit'
+          onClick={(event) => {
+            event.stopPropagation();
+            event.preventDefault();
 
-          handleClick(post);
-          dispatch(deactivateModal());
-        }}
-      >
-        {buttonTitle}
-      </button>
+            if (!title) {
+              setError('Enter title');
+
+              return;
+            } else if (!description) {
+              setError('Enter description');
+
+              return;
+            } else if (!user) {
+              setError('Enter user');
+
+              return;
+            } else if (!requirements) {
+              setError('Enter requirements');
+
+              return;
+            } else {
+              const post = {
+                title,
+                description,
+                user,
+                requirements,
+                image: fileRef.current.files[0],
+              };
+              event.preventDefault();
+              event.stopPropagation();
+
+              handleClick(post);
+
+              dispatch(deactivateModal());
+            }
+          }}
+        >
+          {buttonTitle}
+        </button>
+      </div>
+      {error && <p className='text_error'>{error}</p>}
+    </form>
+  );
+}
+
+export function ModificationForm(props) {
+  const { user, item } = props;
+  const dispatch = useDispatch();
+
+  const buttonTitle = 'Submit';
+
+  const [title, setTitle] = React.useState(item.title);
+  const [description, setDescription] = React.useState(item.description);
+  const [requirements, setRequirements] = React.useState(item.requirements);
+
+  const [error, setError] = React.useState('');
+
+  const handleClick = async (post) => {
+    const formData = new FormData();
+    for (let postKey in post) {
+      formData.append(postKey, post[postKey]);
+    }
+
+    const response = await ApiClientService(`posts/${item.id}/`, {
+      body: formData,
+      method: 'PUT',
+    });
+    console.log('post_new', response);
+    dispatch(setPost(response));
+  };
+
+  return (
+    <form>
+      <div className='form_item_block'>
+        <label>Title: </label>
+        <input
+          name='title'
+          type='text'
+          value={title}
+          onChange={(event) => {
+            setTitle(event.target.value);
+            setError('');
+          }}
+        />
+      </div>
+      <div className='form_item_block'>
+        <label>Description: </label>
+        <textarea
+          className='text_area_form'
+          name='description'
+          type='text'
+          value={description}
+          onChange={(event) => {
+            setDescription(event.target.value);
+            setError('');
+          }}
+        />
+      </div>
+      <div className='form_item_block'>
+        <label>Requirements: </label>
+        <textarea
+          className='text_area_form'
+          name='requirements'
+          type='text'
+          value={requirements}
+          onChange={(event) => {
+            setRequirements(event.target.value);
+            setError('');
+          }}
+        />
+      </div>
+      <div className='div_button'>
+        <button
+          className='submit_button'
+          type='submit'
+          onClick={(event) => {
+            event.stopPropagation();
+            event.preventDefault();
+
+            if (!title) {
+              setError('Enter title');
+
+              return;
+            } else if (!description) {
+              setError('Enter description');
+
+              return;
+            } else if (!user) {
+              setError('Enter user');
+
+              return;
+            } else if (!requirements) {
+              setError('Enter requirements');
+
+              return;
+            } else {
+              const post = {
+                title,
+                description,
+                user,
+                requirements,
+              };
+
+              handleClick(post);
+
+              dispatch(deactivateModal());
+            }
+          }}
+        >
+          {buttonTitle}
+        </button>
+      </div>
+      {error && <p className='text_error'>{error}</p>}
     </form>
   );
 }

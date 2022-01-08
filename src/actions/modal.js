@@ -12,7 +12,6 @@ export function setModalData(payload) {
 }
 
 export function activateModal(modalData = null) {
-  console.log('activateModal', modalData);
   return {
     type: ACTIVATE_MODAL,
     modalData,

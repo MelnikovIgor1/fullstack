@@ -1,13 +1,10 @@
 .block_creator {
   width: 60%;
-  height: 60px;
+  height: 90px;
   margin: auto; 
   padding: auto;
-  /* background-color: rgba(213, 216, 190, 0.2); */
   display: grid;
   grid-template-columns: 1fr 4fr 1fr 1fr;
-  /* grid-template-rows: repeat(3, 1fr); */
-  background-color: rgba(250, 197, 176, 0.2);
   position: relative;
 }
 
@@ -15,9 +12,53 @@
   background-color: rgb(145, 144, 144);
   grid-column: 2;
   border-radius: 20px;
+  font-size: 30px;
+
 }
 
 .button_creator {
   grid-column: 3;
   border-radius: 20px;
+  font-size: 70px;
+
+  transition-duration: 0.4s;
+}
+.button_creator:hover {
+  background-color: #adcf96; /* Green */
+  /* color: rgb(78, 95, 74); */
+}
+
+.text_area_form {
+  width: 80%;
+  height: 100px;
+  resize: none;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.form_item_block {
+  margin: 10px;
+}
+
+.submit_button {
+  align-items: center;
+  text-align: center;
+  align-self: center;
+}
+
+.div_button {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text_error {
+  color: rgb(175, 0, 0);
+  font-style: bold;
+}
+
+.form_wrapper_main {
+  margin: 20px;
 }

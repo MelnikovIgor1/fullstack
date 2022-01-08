@@ -1,1 +1,1 @@
-export { CreatorButton, CreatorForm } from './ProjectCreator';
+export { CreatorButton, CreatorForm, ModificationForm } from './ProjectCreator';
