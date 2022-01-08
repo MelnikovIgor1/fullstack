@@ -15,38 +15,35 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+# from posts.views import post_list
 from django.conf.urls.static import static
 from django.conf import settings
 
-from posts.views import post_list
 from rest_framework import routers
-from posts.views import PostListView # , MyPostListView
-from usersdata.views import UserDataView
-
-from .view import CurrentUser
-
-# from .view import UserViewSet
-
-from usersdata.views import UsersDataViewSet
+from posts.views import PostListView, MyPostListView
+from applications.views import ApplicationListView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from .view import UserViewSet, CurrentUser
+
 
 router = routers.DefaultRouter()
-router.register('usersdata', UsersDataViewSet)
 router.register('posts', PostListView)
-router.register('users', UserDataView)
+router.register('myposts', MyPostListView)
+router.register('applications', ApplicationListView)
+router.register('users', UserViewSet)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('post/', include('posts.urls')),
-    path('api/post_list', post_list, name='post_list_api'),
+    # path('post/', include('posts.urls')),
+    path('api/', include(router.urls)),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('signup/', include('posts.urls')),
     path('api/user/current', CurrentUser.as_view(), name='current_user'),
-    path('api/', include(router.urls)),
+    
+    # path('api/post_list', post_list, name='post_list_api')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-

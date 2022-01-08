@@ -7,12 +7,10 @@ export async function ApiClientService(url, options = {}) {
     headers['Authorization'] = `Bearer ${access}`;
   }
 
-  console.log('user', localStorage.getItem('user'));
-  console.log('options', { ...options });
   let response = await fetch(`${apiBase}${url}`, { ...options, headers });
 
-  if (response.status === 500) {
-    console.log('ErrorResponse 500');
+  if (response.status === 204) {
+    return null;
   }
 
   if (response.status === 401) {
@@ -38,9 +36,4 @@ export async function ApiClientService(url, options = {}) {
   const data = await response.json();
 
   return data;
-}
-
-export async function ApiRawRequest(url, options = {}) {
-  // const access = window.localStorage.getItem('ACCESS');
-  return fetch(`${apiBase}${url}`, { ...options });
 }

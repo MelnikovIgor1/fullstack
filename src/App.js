@@ -1,16 +1,18 @@
-// import logo from './logo.svg';
-import './App.css';
 import React from 'react';
-
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
-import { LoginPage, RegistrationPage } from './components/LoginPage';
-import PersonalRoom from './components/PersonalRoom';
-import ProjectsRoom from './components/ProjectsRoom';
+
+import MainPage from './components/MainPage';
+
+import PersonalPosts from './components/PersonalPage';
+import { Updater } from './components/Updater';
+
+import Login from './components/Login';
+import Registration from './components/Registration';
 
 import { ApiClientService } from './services/ApiClientService';
 
 export function App() {
-  const [user, setUser] = React.useState(null);
+  const [user, setUser] = React.useState('');
   const [isLogin, setIsLogin] = React.useState(
     window.localStorage.getItem('ACCESS')
   );
@@ -26,31 +28,42 @@ export function App() {
     }
   }, [isLogin]);
 
-  console.log('TYPE: ', typeof setIsLogin);
-
   return (
     <>
       <BrowserRouter>
         <Switch>
           <Route path='/projects'>
-            {isLogin ? <ProjectsRoom user={user} /> : <Redirect to='/login' />}
-          </Route>
-          <Route path='/room'>
-            {isLogin ? <PersonalRoom user={user} /> : <Redirect to='/login' />}
+            {isLogin ? (
+              <PersonalPosts
+                user={user}
+                isLogin={isLogin}
+                setIsLogin={setIsLogin}
+              />
+            ) : (
+              <Redirect to='/login' />
+            )}
           </Route>
           <Route path='/login'>
-            <LoginPage isLogin={isLogin} setIsLogin={setIsLogin} />
+            <Login setIsLogin={setIsLogin} />
           </Route>
           <Route path='/registration'>
-            <RegistrationPage isLogin={isLogin} setIsLogin={setIsLogin} />
+            <Registration setIsLogin={setIsLogin} />
+          </Route>
+          <Route path='/logout'>
+            <Redirect to='/' />
+          </Route>
+          <Route path='/post/:postId'>
+            <Updater isLogin={isLogin} user={user} />
           </Route>
           <Route path='/'>
-            {isLogin ? <Redirect to='/room' /> : <Redirect to='/login' />}
+            {isLogin ? (
+              <MainPage user={user} isLogin={isLogin} setIsLogin={setIsLogin} />
+            ) : (
+              <Redirect to='/login' />
+            )}
           </Route>
         </Switch>
       </BrowserRouter>
     </>
   );
 }
-
-export default App;
