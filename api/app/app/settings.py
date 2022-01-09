@@ -25,7 +25,14 @@ SECRET_KEY = 'django-insecure-b9jo9u7&s#!15f76k7_90st1#xdpa)#ph)vi#g861icw$o!r8+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = [
+    '192.168.2.62',
+    'localhost',
+    '127.0.0.1',
+    'melnikov.name'
+]
 
 
 # Application definition
@@ -145,7 +152,8 @@ REST_FRAMEWORK = {
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = ('content-disposition', 'accept-encoding', 'content-type', 'accept', 'origin', 'authorization')
-CORS_ORIGIN_WHITELIST = ('http://localhost:3001',)
+# CORS_ORIGIN_WHITELIST = ('http://localhost:3001',)
+CORS_ORIGIN_ALLOW_ALL = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [

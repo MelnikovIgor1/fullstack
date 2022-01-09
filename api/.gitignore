@@ -1,2 +1,4 @@
 env
 *.pyc
+env_
+api/app/app/__pycache__/

@@ -1,4 +1,5 @@
-const apiBase = 'http://localhost:8000/api/';
+// const apiBase = 'http://localhost:8000/api/';
+import { apiBase } from '../constants/keys';
 
 export async function ApiClientService(url, options = {}) {
   const access = window.localStorage.getItem('ACCESS');
@@ -7,9 +8,12 @@ export async function ApiClientService(url, options = {}) {
     headers['Authorization'] = `Bearer ${access}`;
   }
 
+  console.log('SENT API', url, { ...options, headers });
   let response = await fetch(`${apiBase}${url}`, { ...options, headers });
+  console.log('API', url, response);
 
   if (response.status === 204) {
+    console.log('BIBA');
     return null;
   }
 
