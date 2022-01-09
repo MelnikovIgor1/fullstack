@@ -1,10 +1,13 @@
 import { useHistory } from 'react-router-dom';
+import { apiBase } from '../../constants/keys';
 
 export function useAuth(setIsLogin, setError) {
+  console.log('useAuth');
+
   const history = useHistory();
 
   const onAuth = async (login, password) => {
-    const response = await fetch('http://localhost:8000/api/token/', {
+    const response = await fetch(apiBase + 'token/', {
       method: 'POST',
       headers: {
         'Content-Type': 'Application/json',
@@ -13,6 +16,9 @@ export function useAuth(setIsLogin, setError) {
         username: login,
         password,
       }),
+    }).catch((err) => {
+      console.log('problems', err);
+      console.log(err);
     });
 
     console.log('response', response);

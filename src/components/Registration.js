@@ -2,6 +2,8 @@ import React from 'react';
 import { useAuth } from './hooks/useAuth';
 import { useHistory } from 'react-router-dom';
 
+import { apiBase } from '../constants/keys';
+
 export default function Registration(props) {
   const history = useHistory();
   const { setIsLogin } = props;
@@ -37,7 +39,7 @@ export default function Registration(props) {
       return;
     }
 
-    const response = await fetch('http://localhost:8000/api/users/', {
+    const response = await fetch(apiBase + 'users/', {
       method: 'POST',
       headers: {
         'Content-Type': 'Application/json',
@@ -49,7 +51,7 @@ export default function Registration(props) {
       }),
     });
     const data = await response.json();
-    console.log('data', data, response);
+    console.log('users data', data, response);
 
     if (response.statusText !== 'Created') {
       setError(data.email);

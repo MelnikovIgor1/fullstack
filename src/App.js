@@ -18,9 +18,13 @@ export function App() {
   );
 
   const fetchUser = async () => {
+    console.log('SENT');
     const user = await ApiClientService('user/current');
+    console.log('USERR  ');
     setUser(user);
   };
+
+  console.log('MAIN USER', user);
 
   React.useEffect(() => {
     if (isLogin) {

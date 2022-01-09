@@ -30,6 +30,8 @@ export default function Login(props) {
 
       return;
     }
+
+    console.log('LOGIN');
     await onAuth(login, password);
   };
 
